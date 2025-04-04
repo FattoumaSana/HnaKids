@@ -1,14 +1,19 @@
 import React from 'react';
-import MobileHeader from '../components/header/MobileHeader';
-import DesktopHeader from '../components/header/DesktopHeader';
-import GlowingButton from '../components/GlowingButton';
 import './Home.css';
 // import BannerImage from '../assets/banner/default-banner.jpg';
 import { useMediaQuery } from 'react-responsive';
+import { Button } from '@mui/material'; // Importez le composant Button de Material UI
+import MobileHeader from '../components/header/MobileHeader';
+import DesktopHeader from '../components/header/DesktopHeader';
 
 function Home() {
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const isDesktop = useMediaQuery({ minWidth: 768 });
+
+  const handleDiscoverClick = () => {
+    console.log('Découvrir les articles');
+    // Ici, vous pouvez ajouter la logique pour rediriger l'utilisateur vers la liste des articles
+  };
 
   return (
     <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-300 min-h-screen">
@@ -24,9 +29,13 @@ function Home() {
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
               <h1 className="text-3xl font-bold mb-4">Trouvez des trésors pour vos petits choux !</h1>
               <p className="text-lg mb-6">Un vide-grenier en ligne pour les mamans et leurs bébés.</p>
-              <GlowingButton onClick={() => console.log('Découvrir les articles')}>
+              <Button
+                variant="contained" // Utilisez le style de bouton "contained" de Material UI
+                color="primary" // Couleur principale (bleu par défaut)
+                onClick={handleDiscoverClick}
+              >
                 Découvrir les articles
-              </GlowingButton>
+              </Button>
             </div>
           </div>
         </section>
@@ -34,11 +43,11 @@ function Home() {
         {/* Navigation par catégories */}
         <div className="mb-8">
           <div className="container mx-auto px-4 flex space-x-4 overflow-x-auto">
-            <button className="px-4 py-2 rounded-full text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 shadow">Jouets</button>
-            <button className="px-4 py-2 rounded-full text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 shadow">Vêtements bébé</button>
-            <button className="px-4 py-2 rounded-full text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 shadow">Matériel bébé</button>
-            <button className="px-4 py-2 rounded-full text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 shadow">Grossesse & allaitement</button>
-            {/* Ajoutez d'autres catégories ici */}
+            <Button variant="outlined" size="small">Jouets</Button>
+            <Button variant="outlined" size="small">Vêtements bébé</Button>
+            <Button variant="outlined" size="small">Matériel bébé</Button>
+            <Button variant="outlined" size="small">Grossesse & allaitement</Button>
+            {/* Ajoutez d'autres catégories ici en utilisant le composant Button de Material UI */}
           </div>
         </div>
 
@@ -54,9 +63,9 @@ function Home() {
             {/* Ajoutez plus de placeholders si nécessaire */}
           </div>
           <div className="text-center mt-4">
-            <button className="px-6 py-3 rounded-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            <Button variant="contained" color="indigo" onClick={() => console.log('Voir tous les articles')}>
               Voir tous les articles
-            </button>
+            </Button>
           </div>
         </section>
 

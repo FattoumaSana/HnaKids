@@ -1,96 +1,74 @@
 import React from 'react';
 import logo from '../../assets/logo/logo-HnaKids-3D.png';
-import { Button } from '../ui/moving-border';
-import { PlaceholdersAndVanishInput } from '../ui/placeholders-and-vanish-input';
-
-
+import { Button } from '@mui/material'; // Importez le composant Button de Material UI
+import { TextField } from '@mui/material'; // Importez le composant TextField pour l'input
+import { useState, useEffect } from 'react'; // Importez les hooks nécessaires
 
 function DesktopHeader() {
+  const searchPlaceholders = ["Rechercher des jouets...", "Rechercher des vêtements...", "Rechercher du matériel bébé..."];
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [searchText, setSearchText] = useState('');
 
-    const searchPlaceholders = ["Rechercher des jouets...", "Rechercher des vêtements...", "Rechercher du matériel bébé..."];
-    const handleSearchChange = (e) => {
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setPlaceholderIndex((prevIndex) => (prevIndex + 1) % searchPlaceholders.length);
+    }, 1500); // Change de placeholder toutes les 1.5 secondes
 
-        console.log('Recherche en cours :', e.target.value);
+    return () => clearInterval(intervalId); // Nettoyage de l'intervalle
+  }, [searchPlaceholders.length]);
 
-        // Vous pouvez gérer la logique de changement ici
+  const handleSearchChange = (e) => {
+    setSearchText(e.target.value);
+    console.log('Recherche en cours :', e.target.value);
+    // Vous pouvez gérer la logique de changement ici (par exemple, filtrer des résultats)
+  };
 
-    };
+  const handleSearchSubmit = (e) => {
+    e.preventDefault(); // Empêche le rechargement de la page lors de la soumission
+    console.log('Recherche soumise :', searchText);
+    // Vous pouvez gérer la logique de soumission ici (par exemple, effectuer une requête de recherche)
+  };
 
+  return (
+    <header className="bg-white dark:bg-gray-800 shadow py-4">
+      <div className="container mx-auto px-6 flex items-center justify-between">
+        {/* Logo à gauche */}
+        <div className="flex-shrink-0">
+          <img src={logo} alt="Logo HnaKids" className="h-10" />
+        </div>
 
+        {/* Barre de recherche centrée */}
+        <div className="flex-grow mx-4">
+          <form onSubmit={handleSearchSubmit}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder={searchPlaceholders[placeholderIndex]}
+              value={searchText}
+              onChange={handleSearchChange}
+              size="small"
+            />
+          </form>
+        </div>
 
-    const handleSearchSubmit = (e) => {
+        {/* Bouton de connexion à droite */}
+        <div className="flex-shrink-0">
+          <Button color="primary" variant="outlined" size="small">Connexion</Button>
+        </div>
+      </div>
 
-        console.log('Recherche soumise :', e.target.value);
-
-        // Vous pouvez gérer la logique de soumission ici
-
-    };
-
-    return (
-
-        <header className="bg-white dark:bg-gray-800 shadow py-4">
-
-            <div className="container mx-auto px-6 flex items-center justify-between">
-
-                {/* Logo à gauche */}
-
-                <div className="flex-shrink-0">
-
-                    <img src={logo} alt="Logo HnaKids" className="h-10" />
-
-                </div>
-
-                {/* Barre de recherche centrée */}
-
-                <div className="flex-grow mx-4">
-
-                    <PlaceholdersAndVanishInput
-
-                        placeholders={searchPlaceholders}
-
-                        onChange={handleSearchChange}
-
-                        onSubmit={handleSearchSubmit}
-
-                    />
-
-                </div>
-
-
-                {/* Bouton de connexion à droite */}
-
-                <div className="flex-shrink-0">
-
-                    <Button>Connexion</Button>
-
-                </div>
-
-            </div>
-
-
-            {/* Navigation par catégories */}
-
-            <div className="bg-gray-100 dark:bg-gray-700 py-2 mt-2">
-
-                <div className="container mx-auto px-6 flex space-x-4 overflow-x-auto">
-
-                    <button className="px-4 py-2 rounded-full text-sm bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 shadow">Jouets</button>
-
-                    <button className="px-4 py-2 rounded-full text-sm bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 shadow">Vêtements bébé</button>
-
-                    <button className="px-4 py-2 rounded-full text-sm bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 shadow">Matériel bébé</button>
-
-                    <button className="px-4 py-2 rounded-full text-sm bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 shadow">Grossesse & allaitement</button>
-
-                </div>
-
-            </div>
-
-        </header>
-
-    );
-
+      {/* Navigation par catégories */}
+      <div className="bg-gray-100 dark:bg-gray-700 py-2 mt-2">
+        <div className="container mx-auto px-6 flex space-x-4 overflow-x-auto">
+          <Button variant="contained" color="secondary" size="small">Jouets</Button>
+          <Button variant="contained" color="secondary" size="small">Vêtements bébé</Button>
+          <Button variant="contained" color="secondary" size="small">Matériel bébé</Button>
+          <Button variant="contained" color="secondary" size="small">Grossesse & allaitement</Button>
+          {/* Ajoutez d'autres catégories ici en utilisant le composant Button de Material UI */}
+        </div>
+      </div>
+    </header>
+  );
 }
 
-
-export default DesktopHeader; 
+export default DesktopHeader;
