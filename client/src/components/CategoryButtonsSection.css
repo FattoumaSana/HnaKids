@@ -1,0 +1,18 @@
+.category-buttons-container {
+    display: flex;
+    justify-content: center;
+    /* Centre les boutons horizontalement */
+    align-items: center;
+    padding: 20px 0;
+    /* Ajoutez un peu de padding au-dessus et en dessous */
+    background-color: #f8f9fa;
+    /* Exemple de fond léger pour la section (facultatif) */
+}
+
+.category-buttons-container>* {
+    /* Applique un style aux enfants directs (les boutons) */
+    margin: 0 10px;
+    /* Ajoute une marge entre les boutons */
+}
+
+/* Vous pouvez ajouter d'autres styles ici pour personnaliser l'apparence de la section et des boutons */
