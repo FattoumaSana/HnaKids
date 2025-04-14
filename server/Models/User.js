@@ -26,7 +26,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        // Vous pouvez ajouter une validation de format de numéro de téléphone si nécessaire
     },
     firstName: { // le prénom
         type: String,

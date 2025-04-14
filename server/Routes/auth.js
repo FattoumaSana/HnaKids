@@ -8,14 +8,14 @@ const isAuth = require("../Middleware/isAuth");
 
 router.post("/register", async (req, res) => {
     try {
-        const { username, email, password, phone } = req.body; // Incluez phone
+        const { username, email, password, phone } = req.body; 
         let user = await User.findOne({ email });
         if (user) {
-            return res.status(409).send({ msg: "User with this email already exists" }); // Statut 409 Conflict
+            return res.status(409).send({ msg: "User with this email already exists" }); 
         }
         user = await User.findOne({ username });
         if (user) {
-            return res.status(409).send({ msg: "This username is already taken" }); // Statut 409 Conflict
+            return res.status(409).send({ msg: "This username is already taken" }); 
         }
 
         const newUser = new User({
