@@ -1,12 +1,56 @@
-"use client"
+"use client";
 
 import { useState, useEffect, useRef } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { FaUser, FaShoppingCart, FaSearch, FaTimes, FaChevronDown } from "react-icons/fa"
 import { motion, AnimatePresence } from "framer-motion"
 // Import the logo
 import logo from "../../assets/images/logo.png"
 import ThemeToggle from "../ThemeToggle/ThemeToggle"
+import { styled } from '@mui/material/styles';
+import Badge from '@mui/material/Badge';
+import Avatar from '@mui/material/Avatar';
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    backgroundColor: '#44b700',
+    color: '#44b700',
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    '&::after': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      animation: 'ripple 1.2s infinite ease-in-out',
+      border: '1px solid currentColor',
+      content: '""',
+    },
+  },
+  '@keyframes ripple': {
+    '0%': {
+      transform: 'scale(.8)',
+      opacity: 1,
+    },
+    '100%': {
+      transform: 'scale(2.4)',
+      opacity: 0,
+    },
+  },
+}));
+
+function UserAvatar({ username, avatarSrc }) {
+  return (
+    <StyledBadge
+      overlap="circular"
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      variant="dot"
+    >
+      <Avatar alt={username} src={avatarSrc || "/static/images/avatar/default.jpg"} />
+    </StyledBadge>
+  );
+}
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -16,6 +60,31 @@ const Header = () => {
   const [recentSearches, setRecentSearches] = useState(["Vêtements enfants", "Chaussures bébé", "Jouets 3 ans"])
   const searchRef = useRef(null)
   const inputRef = useRef(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        // Ici, idéalement, vous devriez aussi vérifier la validité du token
+        // en faisant une requête à votre serveur. Pour l'instant, on se contente
+        // de vérifier sa présence.
+        setIsLoggedIn(true);
+        // Si vous avez des informations utilisateur stockées avec le token
+        // (ou si vous les récupérez via un appel API ici), mettez à jour username.
+        // Exemple (à adapter selon votre logique) :
+        // const decodedToken = decode(token);
+        // setUsername(decodedToken.username);
+        setUsername('Nom d\'utilisateur'); // Remplacer par la logique réelle
+      } else {
+        setIsLoggedIn(false);
+        setUsername('');
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   // Categories for suggestions
   const categories = [
@@ -264,13 +333,21 @@ const Header = () => {
           <div className="flex items-center space-x-4">
             <ThemeToggle />
 
-            <Link
-              to="/login"
-              className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-brand-peach dark:hover:text-brand-beige"
-            >
-              <FaUser className="h-5 w-5" />
-              <span className="hidden sm:inline">Connexion</span>
-            </Link>
+            {isLoggedIn ? (
+              <Link to="/profil" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+                <UserAvatar username={username} />
+                <span className="hidden sm:inline">{username}</span>
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-brand-peach dark:hover:text-brand-beige"
+              >
+                <FaUser className="h-5 w-5" />
+                <span className="hidden sm:inline">Connexion</span>
+              </Link>
+            )}
+
             <Link
               to="/panier"
               className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-brand-peach dark:hover:text-brand-beige"

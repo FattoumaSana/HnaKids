@@ -45,7 +45,7 @@ const Login = () => {
           navigate("/");
         }, 2000);
       } else {
-        navigate("/");
+        window.location.reload(); // Force le rechargement de la page après la connexion
       }
       console.log(response.data.msg);
     } catch (err) {
