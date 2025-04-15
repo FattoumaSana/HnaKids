@@ -1,25 +1,33 @@
 const jwt = require("jsonwebtoken");
-const User = require("../Models/User"); 
+const User = require("../Models/User");
 
 const isAuth = async (req, res, next) => {
     try {
-        const token = req.headers["Authorization"]; 
-        if (!token) {
-            return res.status(401).send({ msg: "no token" }); // Renvoyez un statut 401 pour non autorisé
-        } else {
-            const bearerToken = token.startsWith('Bearer ') ? token.slice(7, token.length) : token; // Vérifie et extrait le token après "Bearer "
+        const token = req.headers.authorization; // Use lowercase 'authorization' for consistency
 
-            const decoded = await jwt.verify(bearerToken, process.env.JWT_SECRET); // Utilisez la variable d'environnement pour la clé secrète
-            const user = await User.findById(decoded.id);
-            if (!user) {
-                return res.status(401).send({ msg: "no user connected" }); // Renvoyez un statut 401
-            } else {
-                req.user = user;
-                next();
-            }
+        if (!token) {
+            return res.status(401).json({ msg: "No token provided" });
         }
-    } catch (err) {
-        return res.status(401).json({ msg: "token invalide" }); // Renvoyez un statut 401
+
+        // const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : authHeader;
+
+        // if (!token) {
+        //     return res.status(401).json({ msg: "Invalid token format" }); // More specific message
+        // }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Await the promise
+        const user = await User.findById(decoded.id).select("-password"); // Exclude password
+
+        if (!user) {
+            return res.status(401).json({ msg: "User not found" });
+        }
+
+        req.user = user; // Attach user object to req
+        next(); // Pass control to the next middleware/route handler
+    } catch (error) {
+        // Log the error for server-side debugging
+        console.error("Authentication error:", error);
+        return res.status(401).json({ msg: "Invalid token" });
     }
 };
 

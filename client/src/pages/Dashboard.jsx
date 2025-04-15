@@ -7,95 +7,130 @@ import { motion } from "framer-motion"
 
 const Dashboard = () => {
     const [activeTab, setActiveTab] = useState("overview")
-    const [userData, setUserData] = useState(null)
+    const [userData, setUserData] = useState({
+        firstName: "Sarah",
+        lastName: "Ben Ammar",
+        username: "sarah.ba",
+        email: "sarah@example.com",
+        role: "user",
+    })
     const [orders, setOrders] = useState([])
     const [favorites, setFavorites] = useState([])
     const [listedItems, setListedItems] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState("")
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
     const navigate = useNavigate()
 
     useEffect(() => {
-        const fetchDashboardData = async () => {
-            setLoading(true)
-            setError("")
-            const token = localStorage.getItem("token")
-
-            if (!token) {
-                setError("Vous n'êtes pas connecté.")
-                setLoading(false)
-                navigate("/login")
-                return
-            }
-
+        const token = localStorage.getItem("token")
+        if (token) {
+          setIsAuthenticated(true)
+          // Mock user data for development until backend is connected
+          setUserData({
+            firstName: "Utilisateur",
+            lastName: "Test",
+            username: "user_test",
+            email: "user@example.com",
+          })
+    
+          // Commented out actual API call until backend is ready
+          // Fetch user data
+          const fetchUserData = async () => {
             try {
-                // In a real app, you would fetch user data from your API
-                // For now, we'll use mock data
-
-                // Mock user data
-                setUserData({
-                    firstName: "Sarah",
-                    lastName: "Ben Ammar",
-                    username: "sarah.ba",
-                    email: "sarah@example.com",
-                    role: "user",
-                })
-
-                // Mock data for orders, favorites, and listed items
-                setOrders([
-                    { id: 1, date: "2023-04-15", status: "Livré", total: 59.97, items: 3 },
-                    { id: 2, date: "2023-03-22", status: "En cours", total: 29.99, items: 1 },
-                    { id: 3, date: "2023-02-10", status: "Livré", total: 45.98, items: 2 },
-                ])
-
-                setFavorites([
-                    {
-                        id: 101,
-                        name: "T-shirt Coton Bio",
-                        price: 19.99,
-                        image: "/placeholder.svg?height=100&width=100&text=T-shirt",
-                    },
-                    {
-                        id: 102,
-                        name: "Pantalon Jean",
-                        price: 24.99,
-                        image: "/placeholder.svg?height=100&width=100&text=Pantalon",
-                    },
-                ])
-
-                setListedItems([
-                    {
-                        id: 201,
-                        name: "Chaussures Sport",
-                        price: 34.99,
-                        status: "En vente",
-                        image: "/placeholder.svg?height=100&width=100&text=Chaussures",
-                    },
-                    {
-                        id: 202,
-                        name: "Pull en Laine",
-                        price: 29.99,
-                        status: "Vendu",
-                        image: "/placeholder.svg?height=100&width=100&text=Pull",
-                    },
-                    {
-                        id: 203,
-                        name: "Jouet Éducatif",
-                        price: 15.99,
-                        status: "En vente",
-                        image: "/placeholder.svg?height=100&width=100&text=Jouet",
-                    },
-                ])
+              const response = await fetch("http://localhost:5000/api/auth/isAuth", {
+                headers: {
+                  Authorization: token,
+                },
+              })
+              if (response.ok) {
+                const data = await response.json()
+                setUserData(data.user)
+              }
             } catch (error) {
-                console.error("Erreur lors de la récupération des données du tableau de bord :", error)
-                setError("Erreur lors du chargement des données du tableau de bord.")
-            } finally {
-                setLoading(false)
+              console.error("Error fetching user data:", error)
             }
-        }
+          }
+          setOrders([
+            { id: 1, date: "2023-04-15", status: "Livré", total: 59.97, items: 3 },
+            { id: 2, date: "2023-03-22", status: "En cours", total: 29.99, items: 1 },
+            { id: 3, date: "2023-02-10", status: "Livré", total: 45.98, items: 2 },
+        ])
 
-        fetchDashboardData()
-    }, [navigate])
+        setFavorites([
+            {
+                id: 101,
+                name: "T-shirt Coton Bio",
+                price: 19.99,
+                image: "/placeholder.svg?height=100&width=100&text=T-shirt",
+            },
+            {
+                id: 102,
+                name: "Pantalon Jean",
+                price: 24.99,
+                image: "/placeholder.svg?height=100&width=100&text=Pantalon",
+            },
+        ])
+
+        setListedItems([
+            {
+                id: 201,
+                name: "Chaussures Sport",
+                price: 34.99,
+                status: "En vente",
+                image: "/placeholder.svg?height=100&width=100&text=Chaussures",
+            },
+            {
+                id: 202,
+                name: "Pull en Laine",
+                price: 29.99,
+                status: "Vendu",
+                image: "/placeholder.svg?height=100&width=100&text=Pull",
+            },
+            {
+                id: 203,
+                name: "Jouet Éducatif",
+                price: 15.99,
+                status: "En vente",
+                image: "/placeholder.svg?height=100&width=100&text=Jouet",
+            },
+        ])
+          fetchUserData()
+        }
+      }, [])
+
+    // useEffect(() => {
+    //     const fetchDashboardData = async () => {
+    //         setLoading(true)
+    //         setError("")
+    //         const token = localStorage.getItem("token")
+
+    //         if (!token) {
+    //             setError("Vous n'êtes pas connecté.")
+    //             setLoading(false)
+    //             navigate("/login")
+    //             return
+    //         }
+
+    //         try {
+    //             // In a real app, you would fetch user data from your API
+    //             // For now, we'll use mock data
+
+    //             // Mock user data
+    //             setUserData()
+
+    //             // Mock data for orders, favorites, and listed items
+               
+    //         } catch (error) {
+    //             console.error("Erreur lors de la récupération des données du tableau de bord :", error)
+    //             setError("Erreur lors du chargement des données du tableau de bord.")
+    //         } finally {
+    //             setLoading(false)
+    //         }
+    //     }
+
+    //     fetchDashboardData()
+    // }, [navigate])
 
     const handleLogout = () => {
         localStorage.removeItem("token")
@@ -104,13 +139,13 @@ const Dashboard = () => {
 
     const isAdmin = userData?.role === "admin"
 
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-peach"></div>
-            </div>
-        )
-    }
+    // if (loading) {
+    //     return (
+    //         <div className="flex justify-center items-center h-64">
+    //             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-peach"></div>
+    //         </div>
+    //     )
+    // }
 
     if (error) {
         return (

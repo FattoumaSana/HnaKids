@@ -1,8 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 const ProfilePage = () => {
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [formData, setFormData] = useState({
         firstName: "Sarah",
         lastName: "Ben Ammar",
@@ -14,6 +15,39 @@ const ProfilePage = () => {
         country: "France",
     });
 
+    useEffect(() => {
+        const token = localStorage.getItem("token")
+        if (token) {
+          setIsAuthenticated(true)
+          // Mock user data for development until backend is connected
+          setFormData({
+            firstName: "Utilisateur",
+            lastName: "Test",
+            username: "user_test",
+            email: "user@example.com",
+          })
+    
+          // Commented out actual API call until backend is ready
+          // Fetch user data
+          const fetchUserData = async () => {
+            try {
+              const response = await fetch("http://localhost:5000/api/auth/isAuth", {
+                headers: {
+                  Authorization: token,
+                },
+              })
+              if (response.ok) {
+                const data = await response.json()
+                setFormData(data.user)
+              }
+            } catch (error) {
+              console.error("Error fetching user data:", error)
+            }
+          }
+          fetchUserData()
+        }
+      }, [])
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({

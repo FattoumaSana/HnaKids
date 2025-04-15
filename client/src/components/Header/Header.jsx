@@ -36,25 +36,23 @@ const Header = () => {
       })
 
       // Commented out actual API call until backend is ready
-      /*
       // Fetch user data
       const fetchUserData = async () => {
         try {
-          const response = await fetch("http://localhost:5000/api/auth/user", {
+          const response = await fetch("http://localhost:5000/api/auth/isAuth", {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: token,
             },
           })
           if (response.ok) {
             const data = await response.json()
-            setUserData(data)
+            setUserData(data.user)
           }
         } catch (error) {
           console.error("Error fetching user data:", error)
         }
       }
       fetchUserData()
-      */
     }
   }, [])
 

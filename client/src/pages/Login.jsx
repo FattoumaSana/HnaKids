@@ -41,18 +41,18 @@ const Login = () => {
 
       // For development purposes, check if the backend is available
       // In a production app, you would remove this mock logic
-      const backendAvailable = false // Set to true when your backend is ready
+      // const backendAvailable = false // Set to true when your backend is ready
 
-      if (!backendAvailable) {
-        // Mock authentication for development
-        console.log("Using mock authentication (backend not connected)")
-        localStorage.setItem("token", "mock-token-for-development")
-        setTimeout(() => {
-          setLoading(false)
-          navigate("/")
-        }, 1000)
-        return
-      }
+      // if (!backendAvailable) {
+      //   // Mock authentication for development
+      //   console.log("Using mock authentication (backend not connected)")
+      //   localStorage.setItem("token", "mock-token-for-development")
+      //   setTimeout(() => {
+      //     setLoading(false)
+      //     navigate("/")
+      //   }, 1000)
+      //   return
+      // }
 
       const response = await fetch(`http://localhost:5000${endpoint}`, {
         method: "POST",
