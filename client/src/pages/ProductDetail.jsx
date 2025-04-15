@@ -214,11 +214,11 @@ const ProductDetail = () => {
           <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
           <div className="flex items-center mb-4">
             <span className="text-2xl font-bold text-brand-peach dark:text-brand-beige mr-3">
-              {product.price.toFixed(2)} €
+              {product.price.toFixed(2)} DT
             </span>
             {product.originalPrice && (
               <>
-                <span className="text-lg text-gray-500 line-through mr-3">{product.originalPrice.toFixed(2)} €</span>
+                <span className="text-lg text-gray-500 line-through mr-3">{product.originalPrice.toFixed(2)} DT</span>
                 <span className="px-2 py-1 bg-brand-peach/10 text-brand-peach dark:bg-brand-beige/10 dark:text-brand-beige rounded-md text-sm font-medium">
                   -{discount}%
                 </span>
@@ -399,7 +399,7 @@ const ProductDetail = () => {
                   <h3 className="font-medium mb-1">{product.name}</h3>
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-brand-peach dark:text-brand-beige">
-                      {product.price.toFixed(2)} €
+                      {product.price.toFixed(2)} DT
                     </span>
                     <span className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
                       {product.condition}

@@ -3,9 +3,16 @@ import { useParams } from "react-router-dom"
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import { FaTshirt, FaCamera, FaMoneyBillWave, FaTruck, FaClipboardList, FaPercent } from "react-icons/fa"
+import { BrandSelector } from "../components/ui/brand-selector"
+import { useState } from "react"
 
 const Vendre = () => {
   const { section } = useParams()
+  const [selectedBrand, setSelectedBrand] = useState(null)
+
+  const handleBrandSelect = (brandId) => {
+    setSelectedBrand(brandId)
+  }
 
   // Content based on section
   const renderContent = () => {
@@ -60,6 +67,59 @@ const Vendre = () => {
                     <p className="text-gray-600 dark:text-gray-400">
                       Indiquez les détails de chaque article : taille, marque, état, etc.
                     </p>
+                    <div className="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                      <h4 className="font-medium mb-4">Informations sur l'article</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Catégorie
+                          </label>
+                          <select className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-peach dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                            <option value="">Sélectionner une catégorie</option>
+                            <option value="vetements">Vêtements</option>
+                            <option value="chaussures">Chaussures</option>
+                            <option value="jouets">Jouets</option>
+                            <option value="accessoires">Accessoires</option>
+                            <option value="puericulture">Puériculture</option>
+                            <option value="livres">Livres</option>
+                          </select>
+                        </div>
+                        <div>
+                          <BrandSelector
+                            onBrandSelect={handleBrandSelect}
+                            selectedBrand={selectedBrand}
+                            childrenOnly={true}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Âge</label>
+                          <select className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-peach dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                            <option value="">Sélectionner une tranche d'âge</option>
+                            <option value="0-1">0-1 an</option>
+                            <option value="1-2">1-2 ans</option>
+                            <option value="2-3">2-3 ans</option>
+                            <option value="3-4">3-4 ans</option>
+                            <option value="4-5">4-5 ans</option>
+                            <option value="5-6">5-6 ans</option>
+                            <option value="6-8">6-8 ans</option>
+                            <option value="8-10">8-10 ans</option>
+                            <option value="10-12">10-12 ans</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            État
+                          </label>
+                          <select className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-peach dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                            <option value="">Sélectionner l'état</option>
+                            <option value="neuf">Neuf avec étiquette</option>
+                            <option value="comme-neuf">Comme neuf</option>
+                            <option value="bon">Bon état</option>
+                            <option value="correct">État correct</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </li>
                 <li className="flex items-start">

@@ -1,56 +1,12 @@
-"use client";
+"use client"
 
 import { useState, useEffect, useRef } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { FaUser, FaShoppingCart, FaSearch, FaTimes, FaChevronDown } from "react-icons/fa"
+import { FaUser, FaShoppingCart, FaSearch, FaTimes, FaChevronDown, FaSignOutAlt, FaCog } from "react-icons/fa"
 import { motion, AnimatePresence } from "framer-motion"
 // Import the logo
 import logo from "../../assets/images/logo.png"
 import ThemeToggle from "../ThemeToggle/ThemeToggle"
-import { styled } from '@mui/material/styles';
-import Badge from '@mui/material/Badge';
-import Avatar from '@mui/material/Avatar';
-
-const StyledBadge = styled(Badge)(({ theme }) => ({
-  '& .MuiBadge-badge': {
-    backgroundColor: '#44b700',
-    color: '#44b700',
-    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-    '&::after': {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      borderRadius: '50%',
-      animation: 'ripple 1.2s infinite ease-in-out',
-      border: '1px solid currentColor',
-      content: '""',
-    },
-  },
-  '@keyframes ripple': {
-    '0%': {
-      transform: 'scale(.8)',
-      opacity: 1,
-    },
-    '100%': {
-      transform: 'scale(2.4)',
-      opacity: 0,
-    },
-  },
-}));
-
-function UserAvatar({ username, avatarSrc }) {
-  return (
-    <StyledBadge
-      overlap="circular"
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      variant="dot"
-    >
-      <Avatar alt={username} src={avatarSrc || "/static/images/avatar/default.jpg"} />
-    </StyledBadge>
-  );
-}
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -58,33 +14,49 @@ const Header = () => {
   const [isSearching, setIsSearching] = useState(false)
   const [showResults, setShowResults] = useState(false)
   const [recentSearches, setRecentSearches] = useState(["Vêtements enfants", "Chaussures bébé", "Jouets 3 ans"])
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [userData, setUserData] = useState(null)
   const searchRef = useRef(null)
+  const userMenuRef = useRef(null)
   const inputRef = useRef(null)
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
+  const navigate = useNavigate()
 
+  // Check if user is authenticated
   useEffect(() => {
-    const checkAuth = () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        // Ici, idéalement, vous devriez aussi vérifier la validité du token
-        // en faisant une requête à votre serveur. Pour l'instant, on se contente
-        // de vérifier sa présence.
-        setIsLoggedIn(true);
-        // Si vous avez des informations utilisateur stockées avec le token
-        // (ou si vous les récupérez via un appel API ici), mettez à jour username.
-        // Exemple (à adapter selon votre logique) :
-        // const decodedToken = decode(token);
-        // setUsername(decodedToken.username);
-        setUsername('Nom d\'utilisateur'); // Remplacer par la logique réelle
-      } else {
-        setIsLoggedIn(false);
-        setUsername('');
-      }
-    };
+    const token = localStorage.getItem("token")
+    if (token) {
+      setIsAuthenticated(true)
+      // Mock user data for development until backend is connected
+      setUserData({
+        firstName: "Utilisateur",
+        lastName: "Test",
+        username: "user_test",
+        email: "user@example.com",
+      })
 
-    checkAuth();
-  }, []);
+      // Commented out actual API call until backend is ready
+      /*
+      // Fetch user data
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch("http://localhost:5000/api/auth/user", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          if (response.ok) {
+            const data = await response.json()
+            setUserData(data)
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error)
+        }
+      }
+      fetchUserData()
+      */
+    }
+  }, [])
 
   // Categories for suggestions
   const categories = [
@@ -100,6 +72,9 @@ const Header = () => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowResults(false)
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false)
       }
     }
 
@@ -165,12 +140,21 @@ const Header = () => {
     }
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    setIsAuthenticated(false)
+    setUserData(null)
+    setIsUserMenuOpen(false)
+    navigate("/login")
+  }
+
   return (
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
       className="w-full py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm sticky top-0 z-50"
+      style={{ position: "sticky", top: 0 }}
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
@@ -333,11 +317,60 @@ const Header = () => {
           <div className="flex items-center space-x-4">
             <ThemeToggle />
 
-            {isLoggedIn ? (
-              <Link to="/profil" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
-                <UserAvatar username={username} />
-                <span className="hidden sm:inline">{username}</span>
-              </Link>
+            {isAuthenticated ? (
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-brand-peach dark:hover:text-brand-beige"
+                >
+                  <div className="w-8 h-8 rounded-full bg-brand-peach/20 dark:bg-brand-beige/20 flex items-center justify-center text-brand-peach dark:text-brand-beige">
+                    {userData?.firstName?.charAt(0) || userData?.username?.charAt(0) || "U"}
+                  </div>
+                  <span className="hidden sm:inline">{userData?.firstName || userData?.username || "Utilisateur"}</span>
+                </button>
+
+                <AnimatePresence>
+                  {isUserMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50"
+                    >
+                      <Link
+                        to="/dashboard"
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        <div className="flex items-center">
+                          <FaUser className="mr-2" />
+                          <span>Tableau de bord</span>
+                        </div>
+                      </Link>
+                      <Link
+                        to="/profil"
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        <div className="flex items-center">
+                          <FaCog className="mr-2" />
+                          <span>Paramètres</span>
+                        </div>
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <div className="flex items-center">
+                          <FaSignOutAlt className="mr-2" />
+                          <span>Déconnexion</span>
+                        </div>
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             ) : (
               <Link
                 to="/login"

@@ -58,7 +58,7 @@ const Panier = () => {
                         </div>
                       </td>
                       <td className="p-4 text-right">
-                        <p className="font-medium">{(item.price * item.quantity).toFixed(2)} €</p>
+                        <p className="font-medium">{(item.price * item.quantity).toFixed(2)} DT</p>
                       </td>
                     </tr>
                   ))}
@@ -90,15 +90,15 @@ const Panier = () => {
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between">
                   <span>Sous-total</span>
-                  <span>{subtotal.toFixed(2)} €</span>
+                  <span>{subtotal.toFixed(2)} DT</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Frais de livraison</span>
-                  <span>{shipping.toFixed(2)} €</span>
+                  <span>{shipping.toFixed(2)} DT</span>
                 </div>
                 <div className="border-t pt-3 mt-3 font-semibold flex justify-between">
                   <span>Total</span>
-                  <span>{total.toFixed(2)} €</span>
+                  <span>{total.toFixed(2)} DT</span>
                 </div>
               </div>
 

@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom"
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { Card3D, CardItem } from "../components/ui/3d-card"
+import { BrandFilter } from "../components/ui/brand-filter"
+import { clothingBrands } from "../data/brands"
 
 const Boutique = () => {
   const { category } = useParams()
@@ -42,17 +44,30 @@ const Boutique = () => {
     category: ["Vêtements", "Jouets", "Accessoires", "Chaussures", "Puériculture", "Livres"][index % 6],
     age: ["0-1 an", "1-2 ans", "2-3 ans", "3-4 ans", "4-5 ans", "5-6 ans"][index % 6],
     color: ["Rouge", "Bleu", "Vert", "Jaune", "Rose", "Violet"][index % 6],
-    brand: ["Marque A", "Marque B", "Marque C", "Marque D"][index % 4],
+    brand: clothingBrands[index % clothingBrands.length].id,
+    brandName: clothingBrands[index % clothingBrands.length].name,
     condition: ["Neuf", "Comme neuf", "Bon état", "État correct"][index % 4],
   }))
 
-  // Filter products based on the current category
-  const products = filterProductsByCategory(allProducts, category)
+  // Filter products based on the current category and selected filters
+  let products = filterProductsByCategory(allProducts, category)
+
+  // Apply brand filter if selected
+  if (selectedFilters.brand) {
+    products = products.filter((product) => product.brand === selectedFilters.brand)
+  }
 
   const toggleFilter = (type, value) => {
     setSelectedFilters((prev) => ({
       ...prev,
       [type]: prev[type] === value ? null : value,
+    }))
+  }
+
+  const handleBrandSelect = (brandId) => {
+    setSelectedFilters((prev) => ({
+      ...prev,
+      brand: brandId,
     }))
   }
 
@@ -102,6 +117,12 @@ const Boutique = () => {
           <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-sm">
             <h2 className="font-semibold text-lg mb-4">Filtres</h2>
 
+            {/* Brand Filter */}
+            <div className="mb-6">
+              <h3 className="font-medium mb-2">Marque</h3>
+              <BrandFilter onBrandSelect={handleBrandSelect} selectedBrand={selectedFilters.brand} />
+            </div>
+
             {/* Price Filter */}
             <div className="mb-6">
               <h3 className="font-medium mb-2">Prix</h3>
@@ -110,9 +131,8 @@ const Boutique = () => {
                   <div key={price} className="flex items-center">
                     <button
                       onClick={() => toggleFilter("price", price)}
-                      className={`w-4 h-4 rounded-sm border mr-2 ${
-                        selectedFilters.price === price ? "bg-gray-800 border-gray-800" : "border-gray-300"
-                      }`}
+                      className={`w-4 h-4 rounded-sm border mr-2 ${selectedFilters.price === price ? "bg-gray-800 border-gray-800" : "border-gray-300"
+                        }`}
                     ></button>
                     <span>{price}</span>
                   </div>
@@ -128,9 +148,8 @@ const Boutique = () => {
                   <div key={age} className="flex items-center">
                     <button
                       onClick={() => toggleFilter("age", age)}
-                      className={`w-4 h-4 rounded-sm border mr-2 ${
-                        selectedFilters.age === age ? "bg-gray-800 border-gray-800" : "border-gray-300"
-                      }`}
+                      className={`w-4 h-4 rounded-sm border mr-2 ${selectedFilters.age === age ? "bg-gray-800 border-gray-800" : "border-gray-300"
+                        }`}
                     ></button>
                     <span>{age}</span>
                   </div>
@@ -153,29 +172,10 @@ const Boutique = () => {
                   <button
                     key={color.name}
                     onClick={() => toggleFilter("color", color.name)}
-                    className={`w-8 h-8 rounded-full ${color.color} ${
-                      selectedFilters.color === color.name ? "ring-2 ring-offset-2 ring-gray-800" : ""
-                    }`}
+                    className={`w-8 h-8 rounded-full ${color.color} ${selectedFilters.color === color.name ? "ring-2 ring-offset-2 ring-gray-800" : ""
+                      }`}
                     title={color.name}
                   ></button>
-                ))}
-              </div>
-            </div>
-
-            {/* Brand Filter */}
-            <div>
-              <h3 className="font-medium mb-2">Marque</h3>
-              <div className="space-y-2">
-                {["Marque A", "Marque B", "Marque C", "Marque D"].map((brand) => (
-                  <div key={brand} className="flex items-center">
-                    <button
-                      onClick={() => toggleFilter("brand", brand)}
-                      className={`w-4 h-4 rounded-sm border mr-2 ${
-                        selectedFilters.brand === brand ? "bg-gray-800 border-gray-800" : "border-gray-300"
-                      }`}
-                    ></button>
-                    <span>{brand}</span>
-                  </div>
                 ))}
               </div>
             </div>
@@ -209,10 +209,11 @@ const Boutique = () => {
                         <h3 className="text-lg font-semibold">{product.name}</h3>
                         <span className="font-bold text-lg">{product.price.toFixed(2)} €</span>
                       </div>
-                      <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-4">
+                      <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
                         <span>{product.category}</span>
                         <span>{product.age}</span>
                       </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-500 mb-4">Marque: {product.brandName}</div>
                       <button className="w-full py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors">
                         Ajouter au panier
                       </button>
@@ -228,24 +229,56 @@ const Boutique = () => {
             ))}
           </div>
 
-          {/* Pagination */}
-          <div className="mt-12 flex justify-center">
-            <div className="flex space-x-2">
-              <button className="px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                Précédent
-              </button>
-              <button className="px-4 py-2 border rounded-md bg-gray-800 text-white">1</button>
-              <button className="px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                2
-              </button>
-              <button className="px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                3
-              </button>
-              <button className="px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                Suivant
+          {/* Empty state when no products match filters */}
+          {products.length === 0 && (
+            <div className="text-center py-12">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 mx-auto text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <h2 className="text-xl font-semibold mt-4">Aucun produit trouvé</h2>
+              <p className="mt-2 text-gray-600 dark:text-gray-400">
+                Essayez de modifier vos filtres pour voir plus de produits
+              </p>
+              <button
+                onClick={() => setSelectedFilters({ price: null, age: null, color: null, brand: null })}
+                className="mt-4 px-4 py-2 bg-brand-peach text-white rounded-md hover:bg-brand-peach/90 transition-colors"
+              >
+                Réinitialiser les filtres
               </button>
             </div>
-          </div>
+          )}
+
+          {/* Pagination */}
+          {products.length > 0 && (
+            <div className="mt-12 flex justify-center">
+              <div className="flex space-x-2">
+                <button className="px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                  Précédent
+                </button>
+                <button className="px-4 py-2 border rounded-md bg-gray-800 text-white">1</button>
+                <button className="px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                  2
+                </button>
+                <button className="px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                  3
+                </button>
+                <button className="px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                  Suivant
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

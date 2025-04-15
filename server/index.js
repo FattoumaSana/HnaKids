@@ -2,7 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const connectDB = require('./Config/database');
-const authRoutes = require('./Routes/auth'); 
+const authRoutes = require('./Routes/auth');
+const productRoutes = require('./Routes/product');
+const commentRoutes = require('./Routes/comment');
+const ratingRoutes = require('./Routes/rating');
+const favoriteRoutes = require('./Routes/favorite');
+const adminProductsRouter = require('./Routes/adminProducts'); // Importez le routeur admin
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -16,8 +21,13 @@ app.use(bodyParser.json());
 // Connexion à la base de données
 connectDB();
 
-// Utilisez les routes d'authentification
+// Utilisez les routes
 app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/api/ratings', ratingRoutes);
+app.use('/api/favorites', favoriteRoutes);
+app.use('/api/admin/products', adminProductsRouter); 
 
 app.get('/', (req, res) => {
     res.send('Bienvenue sur le backend de HnaKids !');
@@ -26,18 +36,3 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Serveur démarré sur le port ${port}`);
 });
-// ajouter des produits
-const productRoutes = require('./Routes/product');
-app.use('/api/products', productRoutes);
-
-// ajouter des commentaires
-const commentRoutes = require('./Routes/comment');
-app.use('/api/comments', commentRoutes);
-
-//noter un utilisateur
-const ratingRoutes = require('./Routes/rating');
-app.use('/api/ratings', ratingRoutes);
-
-//ajout favoris
-const favoriteRoutes = require('./Routes/favorite');
-app.use('/api/favorites', favoriteRoutes);
